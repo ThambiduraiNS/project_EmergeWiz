@@ -45,12 +45,13 @@ INSTALLED_APPS = [
     'bootstrap5',
     'django_bootstrap_icons',
     'rest_framework',
-    
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -150,6 +151,8 @@ AUTHENTICATION_BACKENDS = [
     'Ewiz_app.auth_backends.MultiModelBackend',  # Add your custom backend
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 # The backend to use for sending emails. The default is SMTP.
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -168,7 +171,7 @@ EMAIL_HOST_PASSWORD = 'bntz xfvk teqz ucyv'
 # Whether to use a TLS (secure) connection when talking to the SMTP server.
 EMAIL_USE_TLS = True
 
-# Default "from" email address for sending emails.
+# Default "to" email address for sending emails.
 DEFAULT_TO_EMAIL = 'hr@emergewiz.com'
 
 DEFAULT_CONTACT_TO_EMAIL = 'contact@emergewiz.com'
