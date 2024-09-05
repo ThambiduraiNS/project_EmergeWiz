@@ -23,6 +23,7 @@ urlpatterns = [
     # # API for login and logout
     path('api/login/', user_login, name='login'),
     path('api/logout/', user_logout, name='api-logout'),
+    
     path('api/send-email/', EmailAPI.as_view(), name='email_api'),
     path('api/send-contact-email/', ContactEmailAPI.as_view(), name='contact_email_api'),
     

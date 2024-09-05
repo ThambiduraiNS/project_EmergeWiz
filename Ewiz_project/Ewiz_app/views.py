@@ -471,19 +471,32 @@ class EmailAPI(APIView):
         # Extract data from the POST request
         name = request.POST.get('name')
         email = request.POST.get('email')
+        phone_no = request.POST.get('phone_no')
         designation = request.POST.get('designation')
         file_ = request.FILES.get('file')  # Handle file field
         
         # Optional: Check the file type
-        allowed_file_types = ['image/jpeg', 'image/png', 'application/pdf', 'text/plain', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv']
+        allowed_file_types = [
+            'image/jpeg', 
+            'image/png', 
+            'application/pdf', 
+            'text/plain', 
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            'text/csv', 
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ]
         if file_ and file_.content_type not in allowed_file_types:
             return Response({'msg': 'Unsupported file type.'}, status=400)
 
-        from_email = settings.DEFAULT_FROM_EMAIL
+        from_email = email
+        to_email = settings.DEFAULT_TO_EMAIL
         subject = f"Message from {name}"
         body = (
-            f"You have received a message from {name} ({email}).\n"
-            f"designation : {designation}\n"
+            f"{'Name':<24}: {'':<1.5}{name}\n\n"
+            f"{'Email':<25.5}: {'':<1.5}{email}\n\n"
+            f"{'Phone Number':<19}: {'':<1}{phone_no}\n\n"
+            f"{'Designation ':<22}: {'':<1.5}{designation}\n\n"
         )
         
         # Validate the required fields
@@ -494,8 +507,8 @@ class EmailAPI(APIView):
         email_message = EmailMessage(
             subject,
             body,
-            from_email,
-            [email],  # Sending the email to the provided email address
+            from_email=from_email,
+            to=[to_email], # Sending the email to the provided email address
         )
         if file_:
             email_message.attach(file_.name, file_.read(), file_.content_type)
@@ -525,12 +538,14 @@ class ContactEmailAPI(APIView):
         phone_no = request.POST.get('phone_no')
         message = request.POST.get('message')
 
-        from_email = settings.DEFAULT_FROM_EMAIL
+        from_email = email
+        to_email = settings.DEFAULT_CONTACT_TO_EMAIL
         subject = f"Message from {name}"
         body = (
-            f"You have received a message from {name} ({email}).\n"
-            f"Phone Number: {phone_no}\n"
-            f"Message:\n{message}\n"
+            f"{'Name':<24}: {name}\n\n"
+            f"{'Email':<25.5}: {to_email}\n\n"
+            f"{'Phone Number':<19}: {phone_no}\n\n"
+            f"{'Message':<22}: \n\n{'':<32}{message}\n\n"
         )
         
         # Validate the required fields
@@ -541,8 +556,8 @@ class ContactEmailAPI(APIView):
         email_message = EmailMessage(
             subject,
             body,
-            from_email,
-            [email],  # Sending the email to the provided email address
+            from_email=from_email,
+            to=[to_email],
         )
         
         # Send the email

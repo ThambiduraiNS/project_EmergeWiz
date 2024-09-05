@@ -160,13 +160,15 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 
 # The email address to use for sending emails.
-EMAIL_HOST_USER = 'thambidurai1604@gmail.com'
+EMAIL_HOST_USER = 'hr@emergewiz.com'
 
 # The password for the email account.
-EMAIL_HOST_PASSWORD = 'uydh mzkt mpwc osnl'
+EMAIL_HOST_PASSWORD = 'bntz xfvk teqz ucyv'
 
 # Whether to use a TLS (secure) connection when talking to the SMTP server.
 EMAIL_USE_TLS = True
 
 # Default "from" email address for sending emails.
-DEFAULT_FROM_EMAIL = 'thambidurai1604@gmail.com'
+DEFAULT_TO_EMAIL = 'hr@emergewiz.com'
+
+DEFAULT_CONTACT_TO_EMAIL = 'contact@emergewiz.com'
