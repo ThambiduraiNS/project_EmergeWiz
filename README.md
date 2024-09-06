@@ -5,7 +5,6 @@
 
 ```bash
 git clone https://github.com/ThambiduraiNS/project_EmergeWiz.git
-cd .\Ewiz_project\
 ```
 
 ## 2. Set up a virtual environment
@@ -13,6 +12,7 @@ cd .\Ewiz_project\
 ```bash
 python -m venv venv
 venv\Scripts\activate  # On Ubuntu use: source venv/bin/activate
+cd .\Ewiz_project\
 ```
 
 ## 3. Install the dependencies
