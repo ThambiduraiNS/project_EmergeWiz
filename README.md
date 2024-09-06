@@ -4,8 +4,8 @@
 ## 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/yourproject.git
-cd yourproject
+git clone https://github.com/ThambiduraiNS/project_EmergeWiz.git
+cd .\Ewiz_project\
 ```
 
 ## 2. Set up a virtual environment
