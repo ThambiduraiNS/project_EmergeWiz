@@ -24,6 +24,7 @@ from django.conf import settings
 from rest_framework.views import APIView
 
 # Create your views here.
+base_url = settings.BASE_URL
 
 @csrf_protect
 def admin_login(request):
@@ -34,7 +35,8 @@ def admin_login(request):
         
         print(email, password)
         
-        url = 'http://127.0.0.1:8000/api/login/'
+        url = f'{base_url}/api/login/'
+        print(f"url : {url}")
         # data = {'username': username, 'password': password}
         data = {'username_or_email': email, 'password': password, 'username': username}
         csrf_token = request.COOKIES.get('csrftoken')
@@ -71,7 +73,7 @@ def admin_login(request):
 
 def logout(request):
     token = Token.objects.get()
-    api_url = 'http://127.0.0.1:8000/api/logout/'
+    api_url = f'{base_url}/api/logout/'
     headers = {
         'Authorization': f'Token {token.key}'
     }
@@ -124,7 +126,7 @@ def add_job_openings_view(request):
             }
             return render(request, 'add_jobs.html', context)
         
-        api_url = 'http://127.0.0.1:8000/api/job_openings/'
+        api_url = f'{base_url}/api/job_openings/'
         headers = {
             'Authorization': f'Token {token.key}',
             'Content-Type': 'application/json'
@@ -168,13 +170,14 @@ def manage_job_openings_view(request):
     # Fetch the token
     try:
         token = Token.objects.first()  # Assuming you only have one token and it's safe to get the first one
+        print(f"Token : {token}")
     except Token.DoesNotExist:
         context = {
             'error': 'Authentication token not found'
         }
         return render(request, 'Ewiz_app/manage_jobs.html', context)
     
-    api_url = 'http://127.0.0.1:8000/api/job_openings/'
+    api_url = f'{base_url}/api/job_openings/'
     headers = {
         'Authorization': f'Token {token.key}',
         'Content-Type': 'application/json'
@@ -228,7 +231,7 @@ def delete_job_openings_view(request, id):
         context = {'error': 'Authentication token not found'}
         return render(request, 'Ewiz_app/manage_jobs.html', context)
     
-    api_url = f'http://127.0.0.1:8000/api/delete_job_openings/{user_id.pk}/'
+    api_url = f'{base_url}/api/delete_job_openings/{user_id.pk}/'
     headers = {
         'Authorization': f'Token {token.key}',
         'Content-Type': 'application/json'
@@ -285,7 +288,7 @@ def update_job_openings_view(request, id):
             context = {'error': 'Authentication token not found'}
             return render(request, 'Ewiz_app/manage_jobs.html', context)
         
-        api_url = f'http://127.0.0.1:8000/api/update_job_openings/{jobs.pk}/'
+        api_url = f'{base_url}/api/update_job_openings/{jobs.pk}/'
         headers = {
             'Authorization': f'Token {token.key}',
             'Content-Type': 'application/json'
@@ -409,6 +412,7 @@ def user_login(request):
 
         if user:
             try:
+                # token, created = Token.objects.get_or_create(user=user)
                 token, created = Token.objects.get_or_create(user=user)
                 print("Generated token:", token)
                 return Response({'token': token.key}, status=status.HTTP_200_OK)

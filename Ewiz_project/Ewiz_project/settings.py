@@ -45,6 +45,7 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'Ewiz_app.NewUser'
 
+BASE_URL = 'http://127.0.0.1:8000'
 
 # Application definition
 
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     'bootstrap5',
     'django_bootstrap_icons',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
 ]
 
