@@ -33,11 +33,7 @@ def admin_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         
-        print(email, password)
-        
         url = f'{base_url}/api/login/'
-        print(f"url : {url}")
-        # data = {'username': username, 'password': password}
         data = {'username_or_email': email, 'password': password, 'username': username}
         csrf_token = request.COOKIES.get('csrftoken')
         
@@ -82,7 +78,6 @@ def logout(request):
         response = requests.post(api_url, headers=headers)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f'Error during API logout: {e}')
         return redirect('dashboard')  # Redirect to dashboard or show an error message
 
     # Remove the token locally after successful API logout
@@ -136,8 +131,6 @@ def add_job_openings_view(request):
             response = requests.post(api_url, json=jobs_data, headers=headers)
             response_data = response.json()
             
-            print(response_data)
-            
         except requests.exceptions.HTTPError as http_err:
             # Handle specific HTTP errors
             context = {
@@ -147,7 +140,6 @@ def add_job_openings_view(request):
             return render(request, 'add_course.html', context)
         except requests.exceptions.RequestException as req_err:
             # Handle general request exceptions
-            print(f'Error during API create Course: {req_err}')
             context = {
                 'error': 'An error occurred while creating course.'
             }
@@ -170,7 +162,6 @@ def manage_job_openings_view(request):
     # Fetch the token
     try:
         token = Token.objects.first()  # Assuming you only have one token and it's safe to get the first one
-        print(f"Token : {token}")
     except Token.DoesNotExist:
         context = {
             'error': 'Authentication token not found'
@@ -214,17 +205,12 @@ def manage_job_openings_view(request):
 def delete_job_openings_view(request, id):
     user_id = JobOpenings.objects.get(id=id)
     
-    print(user_id)
-    
-    print(user_id.pk)
-    
     if not user_id:
         context = {'error': 'ID not provided'}
         return render(request, 'Ewiz_app/manage_jobs.html', context)
     
     try:
         token = Token.objects.first()  # Get the first token for simplicity
-        print(token)
         if not token:
             raise Token.DoesNotExist
     except Token.DoesNotExist:
@@ -254,11 +240,8 @@ def delete_job_openings_view(request, id):
     
 def delete_all_job_openings_view(request):
     if request.method == 'POST':
-        print("Welcome")
         try:
             data = json.loads(request.body)
-            
-            print("Data : ", data)
             
             user_ids = data.get('user_ids', [])
             
@@ -301,15 +284,11 @@ def update_job_openings_view(request, id):
             'salary' : request.POST.get("salary", jobs.salary),
             'description' : request.POST.get("description", jobs.description),
         }
-        
-        print(user_data)
 
         try:
             response = requests.patch(api_url, json=user_data, headers=headers)
-            print("API Response Status Code:", response.status_code)
             response.raise_for_status()
             response_data = response.json()
-            print("API Response Data:", response_data)
         except requests.exceptions.RequestException as err:
             context = {
                 'error': f'Request error occurred: {err}',
@@ -334,11 +313,8 @@ def update_job_opening_status(request):
             data = json.loads(request.body)
             job_opening_id = data.get('job_opening_id')
             new_status = data.get('status')
-            
-            print("New Status : ", new_status)
 
             job_opening = JobOpenings.objects.get(id=job_opening_id)
-            print("Job Opening : ", job_opening)
             job_opening.status = new_status
             job_opening.save()
 
@@ -384,46 +360,32 @@ def send_email_view(request):
 def user_login(request):
     serializer = LoginSerializer(data=request.data)
 
-    print("Received data:", request.data)
-
     if serializer.is_valid():
         username_or_email = serializer.validated_data['username_or_email']
         password = serializer.validated_data['password']
 
-        print("Validated email/username:", username_or_email)
-        print("Validated password:", password)
-
         # Try to find the user by email or username
         try:
             user = NewUser.objects.get(email=username_or_email)
-            print("Try User : ", user)
         except NewUser.DoesNotExist:
             try:
                 user = NewUser.objects.get(username=username_or_email)
-                print("Except User : ", user)
             except NewUser.DoesNotExist:
-                print("NewUser does not exist")
                 return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         
         # Authenticate with NewUser's username
         user = authenticate(request=request, email=user.email, password=password)
 
-        print("Authenticated user:", user)
-
         if user:
             try:
                 # token, created = Token.objects.get_or_create(user=user)
                 token, created = Token.objects.get_or_create(user=user)
-                print("Generated token:", token)
                 return Response({'token': token.key}, status=status.HTTP_200_OK)
             except Exception as e:
-                print("Token creation error:", str(e))
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            print("Authentication failed. Invalid credentials.")
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     else:
-        print("Serializer errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -472,12 +434,14 @@ class JobOpeningsDeleteView(generics.DestroyAPIView):
     
 class EmailAPI(APIView):
     def post(self, request):
-        # Extract data from the POST request
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone_no = request.POST.get('phone_no')
-        designation = request.POST.get('designation')
-        file_ = request.FILES.get('file')  # Handle file field
+       
+        data = json.loads(request.body)
+       
+        name = data.get('name')
+        email = data.get('email')
+        phone_no = data.get('phone_no')
+        designation = data.get('designation')
+        file_ = data.FILES.get('file')  # Handle file field
         
         # Optional: Check the file type
         allowed_file_types = [
@@ -493,8 +457,8 @@ class EmailAPI(APIView):
         if file_ and file_.content_type not in allowed_file_types:
             return Response({'msg': 'Unsupported file type.'}, status=400)
 
-        from_email = email
-        to_email = settings.DEFAULT_TO_EMAIL
+        from_email = settings.DEFAULT_TO_EMAIL
+        to_email = email
         subject = f"Message from {name}"
         body = (
             f"{'Name':<24}: {'':<1.5}{name}\n\n"
@@ -537,17 +501,23 @@ class EmailAPI(APIView):
 class ContactEmailAPI(APIView):
     def post(self, request):
         # Extract data from the POST request
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone_no = request.POST.get('phone_no')
-        message = request.POST.get('message')
+        
+        data = json.loads(request.body)
+        
+        name = data.get('name')
+        email = data.get('email')
+        phone_no = data.get('phone_no')
+        message = data.get('message')
 
         from_email = email
+        
         to_email = settings.DEFAULT_CONTACT_TO_EMAIL
-        subject = f"Message from {name}"
+        
+        subject = f"Message from {from_email}"
+        
         body = (
             f"{'Name':<24}: {name}\n\n"
-            f"{'Email':<25.5}: {to_email}\n\n"
+            f"{'Email':<25.5}: {email}\n\n"
             f"{'Phone Number':<19}: {phone_no}\n\n"
             f"{'Message':<22}: \n\n{'':<32}{message}\n\n"
         )
@@ -560,7 +530,7 @@ class ContactEmailAPI(APIView):
         email_message = EmailMessage(
             subject,
             body,
-            from_email=from_email,
+            from_email,
             to=[to_email],
         )
         
@@ -569,10 +539,5 @@ class ContactEmailAPI(APIView):
         
         return Response({
             'msg': 'Email sent successfully.',
-            'data': {
-                'name': name,
-                'email': email,
-                'phone_no': phone_no,
-                'message': message
-            }
+            'email_message' : sent_mail
         }, status=200)

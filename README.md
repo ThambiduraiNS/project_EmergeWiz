@@ -42,8 +42,8 @@ python manage.py runserver
 ## Project Structure
 
 ```
-yourproject/
-├── yourapp/                  # Main Django app
+Ewiz_project/
+├── Ewiz_app/                  # Main Django app
 │   ├── migrations/           # Database migrations
 │   ├── templates/            # HTML templates
 │   ├── static/               # Static files (CSS, JS)
