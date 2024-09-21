@@ -457,8 +457,8 @@ class EmailAPI(APIView):
         if file_ and file_.content_type not in allowed_file_types:
             return Response({'msg': 'Unsupported file type.'}, status=400)
 
-        from_email = settings.DEFAULT_TO_EMAIL
-        to_email = email
+        from_email = email
+        to_email = settings.DEFAULT_TO_EMAIL
         subject = f"Message from {name}"
         body = (
             f"{'Name':<24}: {'':<1.5}{name}\n\n"
@@ -475,7 +475,7 @@ class EmailAPI(APIView):
         email_message = EmailMessage(
             subject,
             body,
-            from_email=from_email,
+            from_email,
             to=[to_email], # Sending the email to the provided email address
         )
         if file_:
