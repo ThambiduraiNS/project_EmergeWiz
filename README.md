@@ -50,7 +50,7 @@ Ewiz_project/
 │   ├── models.py             # Database models
 │   ├── views.py              # View logic
 │   └── urls.py               # URL routing
-├── project_name/             # Project settings
+├── Ewiz_project/             # Project settings
 │   ├── settings.py           # Global settings
 │   ├── urls.py               # Project-level URL routing
 │   └── wsgi.py               # WSGI application
