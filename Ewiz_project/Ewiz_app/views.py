@@ -487,15 +487,7 @@ class EmailAPI(APIView):
         # Return the received data, including file information, in the response
         return Response({
             'msg': 'Email sent successfully.',
-            'data': {
-                'name': name,
-                'email': email,
-                'designation': designation,
-                'file': {
-                    'filename': file_.name,
-                    'content_type': file_.content_type
-                }
-            }
+            'email_message' : sent_mail
         }, status=200)
 
 class ContactEmailAPI(APIView):

@@ -43,7 +43,7 @@ python manage.py runserver
 
 ```
 Ewiz_project/
-├── Ewiz_app/                  # Main Django app
+├── Ewiz_app/                 # Main Django app
 │   ├── migrations/           # Database migrations
 │   ├── templates/            # HTML templates
 │   ├── static/               # Static files (CSS, JS)
